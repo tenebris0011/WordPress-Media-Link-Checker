@@ -1,9 +1,6 @@
 import requests
 import logging
-from datetime import datetime
-import threading
 import csv
-import os
 
 """
 Setup our logging format.
@@ -77,7 +74,7 @@ def csv_creator(data):
 
 found_bad_items = []
 
-with open('./sites.txt', 'r') as f:
+with open('./resources/sites.txt', 'r') as f:
     sites = f.readlines()
     scraper = WebScraper('')
     for site in sites:
@@ -86,6 +83,12 @@ with open('./sites.txt', 'r') as f:
         scraper.get_media()
         found_bad_items.extend(scraper.get_bad_media())
 
+"""
+scraper = WebScraper('https://www.drkanumilliny.com/')
+scraper.get_site_info()
+scraper.get_posts_pages_media()
+found_bad_items.extend(scraper.get_bad_media())
+"""
 if len(found_bad_items) > 0:
     csv_creator(found_bad_items)
 else:
