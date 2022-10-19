@@ -1,5 +1,6 @@
 import requests
 import logging
+from datetime import datetime
 import csv
 
 """
@@ -41,16 +42,22 @@ class WebScraper:
                     for size in data['media_details']['sizes']:
                         target_url = data['media_details']['sizes'][size]['source_url']
                         logging.info(target_url)
-                        response = requests.get(target_url, headers=self.headers)
-                        if response.status_code != 200:
-                            self.bad_media.append([data['link'], target_url, response.status_code])
+                        try:
+                            response = requests.get(target_url, headers=self.headers)
+                            if response.status_code != 200:
+                                self.bad_media.append([data['link'], target_url, response.status_code])
+                        except urllib3.exceptions.MaxRetryError:
+                            self.bad_media.appen([data['link'], target_url, 'Max Retry Exception'])
                 except KeyError:
                     logging.info('KeyError while looking for media_details, checking for source_url instead.')
                     target_url = data['source_url']
                     logging.info(target_url)
-                    response = requests.get(target_url, headers=self.headers)
-                    if response.status_code != 200:
-                        self.bad_media.append([data['link'], target_url, response.status_code])
+                    try:
+                        response = requests.get(target_url, headers=self.headers)
+                        if response.status_code != 200:
+                            self.bad_media.append([data['link'], target_url, response.status_code])
+                    except urllib3.exceptions.MaxRetryError:
+                        self.bad_media.appen([data['link'], target_url, 'Max Retry Exception'])
 
     def get_site_info(self):
         logging.info(f"Starting on site {self.website}")
@@ -83,6 +90,12 @@ with open('./resources/sites.txt', 'r') as f:
         scraper.get_media()
         found_bad_items.extend(scraper.get_bad_media())
 
+"""
+scraper = WebScraper('https://www.drkanumilliny.com/')
+scraper.get_site_info()
+scraper.get_posts_pages_media()
+found_bad_items.extend(scraper.get_bad_media())
+"""
 if len(found_bad_items) > 0:
     csv_creator(found_bad_items)
 else:
