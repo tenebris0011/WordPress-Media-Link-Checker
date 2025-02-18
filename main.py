@@ -91,7 +91,7 @@ with open('./resources/sites.txt', 'r') as f:
         found_bad_items.extend(scraper.get_bad_media())
 
 """
-scraper = WebScraper('https://www.drkanumilliny.com/')
+scraper = WebScraper('wordpress site')
 scraper.get_site_info()
 scraper.get_posts_pages_media()
 found_bad_items.extend(scraper.get_bad_media())
